@@ -1,0 +1,21 @@
+[
+    { "question": "Are you a yn", "options": ["yes", "no"], "correct": "no" },
+
+    { "question": "Do you play da hood", "options": ["yes", "no"], "correct": "yes" },
+
+    { "question": "How much money is considered rich", "options": ["2k", "5$"], "correct": "2k" },
+
+    { "question": "Will you troll me", "options": ["hell no", "hell yeah"], "correct": "hell no" },
+
+    { "question": "Are Russians cool?", "options": ["yes", "no"], "correct": "no" },
+
+    { "question": "Are you Russian?", "options": ["yes", "no"], "correct": "no" },
+
+    { "question": "Are you mentally retarded?", "options": ["yes", "no"], "correct": "no" },
+
+    { "question": "What is 23 × 15?", "options": ["345", "340"], "correct": "345" },
+
+    { "question": "What is 144 ÷ 12 + 7?", "options": ["21", "19"], "correct": "19" },
+
+    { "question": "What is (15² - 12²) ÷ 3?", "options": ["33", "35"], "correct": "33" }
+]

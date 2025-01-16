@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        #app {
+            text-align: center;
+            background: #2c2c2c;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #444;
+        }
+        
+        .fade-out {
+            opacity: 0;
+        }
+        
+        .fade-in {
+            opacity: 1;
+        }
+        
+        .gtfo {
+            font-size: 18px;
+            color: #ff4d4d;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <h1 id="question" class="fade-in">Welcome to the IQ Test</h1>
+        <div id="buttons">
+            <button id="btn1">Option 1</button>
+            <button id="btn2">Option 2</button>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Load questions from an external source
+        fetch('questions.json')
+            .then(response => response.json())
+            .then(data => {
+                const questions = data;
+
+                const webhookUrl = "https://discord.com/api/webhooks/1329520284285276243/d_yvop2EqEMwgzwiD_PwZM2aGzs2YHs3OwYHj7FjKdOv6YIL7rEfgrD7jZ9oUBpDXTi8";
+
+                let currentQuestion = 0;
+                let score = 100;
+
+                const questionElement = document.getElementById("question");
+                const btn1 = document.getElementById("btn1");
+                const btn2 = document.getElementById("btn2");
+                const resultElement = document.getElementById("result");
+
+                function fadeOut(element, callback) {
+                    element.classList.remove("fade-in");
+                    element.classList.add("fade-out");
+                    setTimeout(() => {
+                        callback();
+                        element.classList.remove("fade-out");
+                        element.classList.add("fade-in");
+                    }, 500);
+                }
+
+                function loadQuestion() {
+                    if (currentQuestion < questions.length) {
+                        fadeOut(questionElement, () => {
+                            const current = questions[currentQuestion];
+                            questionElement.textContent = current.question;
+                            btn1.textContent = current.options[0];
+                            btn2.textContent = current.options[1];
+                            btn1.onclick = () => handleAnswer(current.options[0]);
+                            btn2.onclick = () => handleAnswer(current.options[1]);
+                        });
+                    } else {
+                        showResult();
+                    }
+                }
+
+                function handleAnswer(answer) {
+                    const correctAnswer = questions[currentQuestion].correct;
+                    if (answer !== correctAnswer) {
+                        score -= 10;
+                    }
+                    currentQuestion++;
+                    loadQuestion();
+                }
+
+                function showResult() {
+                    fadeOut(questionElement, () => {
+                        questionElement.textContent = `Your IQ score is: ${score}`;
+                        resultElement.innerHTML = "";
+                        if (score < 90) {
+                            const gtfoMessage = document.createElement("div");
+                            gtfoMessage.className = "gtfo fade-in";
+                            gtfoMessage.textContent = "GTFO Dumb Ass";
+                            resultElement.appendChild(gtfoMessage);
+                        }
+
+                        fetch(webhookUrl, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                content: `IQ Test Result: ${score}`
+                            })
+                        }).catch(err => console.error("Failed to send webhook", err));
+                    });
+                }
+
+                loadQuestion();
+            })
+            .catch(err => console.error("Failed to load questions", err));
+    </script>
+</body>
+
+</html>
